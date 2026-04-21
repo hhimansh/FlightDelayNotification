@@ -1,0 +1,317 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-sans,'DM Sans',sans-serif);background:var(--color-background-tertiary);min-height:100vh;}
+.app-header{background:#0a0f1e;color:white;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:15px;font-weight:700;letter-spacing:0.04em;}
+.logo-icon{width:28px;height:28px;background:#378ADD;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:#4ade80;text-transform:uppercase;letter-spacing:0.08em;}
+.live-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.header-time{font-family:'Space Mono',monospace;font-size:13px;color:rgba(255,255,255,0.55);}
+.header-right{display:flex;align-items:center;gap:16px;}
+.main{display:flex;height:calc(100vh - 56px);}
+.sidebar{width:280px;min-width:280px;background:#0d1323;border-right:1px solid rgba(255,255,255,0.06);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.sidebar-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.35);padding:4px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.notif-card{background:rgba(255,255,255,0.04);border-radius:10px;padding:11px;border:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.15s;border-left-width:3px;}
+.notif-card:hover{background:rgba(255,255,255,0.07);}
+.notif-card.urgent{border-left-color:#E24B4A;}
+.notif-card.warning{border-left-color:#EF9F27;}
+.notif-card.info{border-left-color:#378ADD;}
+.notif-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.notif-flight{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:white;}
+.notif-time{font-size:10px;color:rgba(255,255,255,0.35);font-family:'Space Mono',monospace;}
+.notif-route{font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:5px;}
+.notif-msg{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.5;}
+.notif-delay-badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;margin-top:5px;}
+.badge-urgent{background:rgba(226,75,74,0.2);color:#f09595;}
+.badge-warn{background:rgba(239,159,39,0.2);color:#FAC775;}
+.badge-info{background:rgba(55,138,221,0.2);color:#85B7EB;}
+.badge-ok{background:rgba(99,153,34,0.15);color:#97C459;}
+.content{flex:1;overflow-y:auto;background:#f0efe9;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:20px 24px 0;}
+.stat-card{background:#ffffff;border-radius:10px;border:0.5px solid rgba(0,0,0,0.1);padding:14px 16px;}
+.stat-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#666;margin-bottom:6px;}
+.stat-value{font-size:26px;font-weight:500;font-family:'Space Mono',monospace;color:#111;line-height:1;}
+.stat-sub{font-size:11px;color:#888;margin-top:4px;}
+.stat-value.red{color:#A32D2D;}.stat-value.amber{color:#854F0B;}.stat-value.green{color:#3B6D11;}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px;}
+.section-title{font-size:14px;font-weight:500;color:#111;}
+.filter-tabs{display:flex;gap:4px;}
+.ftab{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid rgba(0,0,0,0.12);background:#fff;color:#555;transition:all 0.15s;}
+.ftab.active{background:#0a0f1e;color:white;border-color:transparent;}
+.ftab:hover:not(.active){background:#e8e7e2;}
+.flight-table{margin:0 24px 24px;background:#ffffff;border-radius:12px;border:0.5px solid rgba(0,0,0,0.1);overflow:hidden;}
+.ft-head{display:grid;grid-template-columns:80px minmax(0,1fr) 75px 75px 70px 85px 90px 80px 120px;padding:10px 14px;background:#f5f4f0;border-bottom:0.5px solid rgba(0,0,0,0.08);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:#888;gap:4px;}
+.ft-row{display:grid;grid-template-columns:80px minmax(0,1fr) 75px 75px 70px 85px 90px 80px 120px;padding:11px 14px;border-bottom:0.5px solid rgba(0,0,0,0.07);align-items:center;transition:background 0.1s;gap:4px;}
+.ft-row:last-child{border-bottom:none;}
+.ft-row:hover{background:#f8f7f3;}
+.flight-num{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#111;}
+.airline-name{font-size:11px;color:#777;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.route{font-size:12px;color:#111;}
+.route-cities{font-size:10px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.time-col{font-family:'Space Mono',monospace;font-size:12px;color:#111;}
+.delayed-time{color:#A32D2D;}
+.delay-pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;}
+.status-pill{display:inline-flex;align-items:center;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;}
+.pill-delayed{background:#FCEBEB;color:#A32D2D;}
+.pill-ontime{background:#EAF3DE;color:#3B6D11;}
+.pill-boarding{background:#E6F1FB;color:#185FA5;}
+.pill-cancelled{background:#fff0f0;color:#7a1a1a;}
+.pill-landed{background:#F1EFE8;color:#5F5E5A;}
+.pax-count{font-family:'Space Mono',monospace;font-size:12px;font-weight:500;color:#111;}
+.pax-notified{font-size:10px;color:#888;}
+.send-btn{padding:4px 9px;border-radius:6px;font-size:10px;font-weight:500;cursor:pointer;border:0.5px solid rgba(0,0,0,0.15);background:#fff;color:#111;transition:all 0.15s;white-space:nowrap;}
+.send-btn:hover{background:#0a0f1e;color:white;border-color:transparent;}
+.send-btn.sent{background:#EAF3DE;color:#3B6D11;border-color:transparent;pointer-events:none;}
+.view-btn{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:500;cursor:pointer;border:0.5px solid #85B7EB;background:#E6F1FB;color:#185FA5;transition:all 0.15s;white-space:nowrap;}
+.view-btn:hover{background:#B5D4F4;border-color:#378ADD;}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(5,10,20,0.75);display:flex;align-items:center;justify-content:center;z-index:500;padding:24px;}
+.modal-backdrop.hidden{display:none;}
+.modal{background:#ffffff;border-radius:16px;border:1px solid rgba(0,0,0,0.12);width:700px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-header{padding:18px 22px 16px;border-bottom:1px solid rgba(0,0,0,0.09);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;background:#ffffff;}
+.modal-flight-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:#0a0f1e;color:white;margin-bottom:6px;}
+.modal-title{font-size:16px;font-weight:500;color:#111;margin-bottom:3px;}
+.modal-subtitle{font-size:12px;color:#777;}
+.modal-close{width:30px;height:30px;border-radius:7px;border:1px solid rgba(0,0,0,0.12);background:#f5f4f0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:#555;transition:all 0.15s;flex-shrink:0;}
+.modal-close:hover{background:#e0dfd9;color:#111;}
+.modal-body{overflow-y:auto;padding:16px 22px;flex:1;background:#f8f7f3;}
+.modal-body::-webkit-scrollbar{width:5px;}
+.modal-body::-webkit-scrollbar-track{background:#f0efe9;}
+.modal-body::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+.pax-table-head{display:grid;grid-template-columns:34px minmax(0,1fr) 55px 88px 42px 55px 78px 62px;gap:10px;padding:8px 12px;background:#eeedea;border-radius:8px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:#666;margin-bottom:8px;border:0.5px solid rgba(0,0,0,0.08);}
+.pax-row{display:grid;grid-template-columns:34px minmax(0,1fr) 55px 88px 42px 55px 78px 62px;gap:10px;padding:10px 12px;border-radius:9px;margin-bottom:6px;align-items:center;background:#ffffff;border:1px solid rgba(0,0,0,0.08);}
+.pax-row:hover{background:#f5f4f0;border-color:rgba(0,0,0,0.12);}
+.pax-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;}
+.pax-name{font-size:12px;font-weight:500;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pax-nat{font-size:10px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pax-mono{font-family:'Space Mono',monospace;font-size:11px;color:#222;}
+.pax-small{font-size:11px;color:#444;}
+.nd-wrap{display:flex;align-items:center;justify-content:flex-start;}
+.notif-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:1px solid transparent;}
+.nd-yes{background:#EAF3DE;color:#3B6D11;border-color:#97C459;}
+.nd-no{background:#f0efe9;color:#aaa;border-color:#d0cfc9;}
+.modal-footer{padding:13px 22px;border-top:1px solid rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#ffffff;}
+.modal-footer-info{font-size:12px;color:#666;}
+.notify-all-btn{padding:9px 20px;border-radius:8px;background:#0a0f1e;color:white;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:opacity 0.15s;}
+.notify-all-btn:hover{opacity:0.82;}
+.notify-all-btn.done{background:#EAF3DE;color:#3B6D11;pointer-events:none;}
+.toast-container{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;}
+.toast{background:#0a0f1e;color:white;padding:12px 16px;border-radius:10px;font-size:13px;max-width:300px;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:auto;border-left:3px solid #378ADD;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-title{font-weight:500;margin-bottom:2px;font-family:'Space Mono',monospace;font-size:12px;}
+.toast-body{font-size:12px;color:rgba(255,255,255,0.7);}
+</style>
+
+<div class="app-header">
+  <div class="logo"><div class="logo-icon">✈</div>SKYTRACK</div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <div class="header-time" id="live-time">--:--:--</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-title">Delay Notifications</div>
+    <div id="notif-list"></div>
+  </div>
+  <div class="content">
+    <div class="stats-row" id="stats-row"></div>
+    <div class="section-header">
+      <div class="section-title">Flight Board</div>
+      <div class="filter-tabs">
+        <div class="ftab active" onclick="filterFlights('all',this)">All</div>
+        <div class="ftab" onclick="filterFlights('delayed',this)">Delayed</div>
+        <div class="ftab" onclick="filterFlights('ontime',this)">On Time</div>
+        <div class="ftab" onclick="filterFlights('boarding',this)">Boarding</div>
+      </div>
+    </div>
+    <div class="flight-table">
+      <div class="ft-head">
+        <div>Flight</div><div>Route</div><div>Sched.</div><div>Est.</div><div>Delay</div><div>Status</div><div>Passengers</div><div>Notify</div><div>Actions</div>
+      </div>
+      <div id="flight-rows"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modal-backdrop" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-flight-badge" id="modal-badge"></div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <div class="modal-close" onclick="closeModal()">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="pax-table-head">
+        <div></div><div>Name</div><div>Seat</div><div>DOB</div><div>Age</div><div>Bags</div><div>Passport</div><div>Notified</div>
+      </div>
+      <div id="modal-pax-list"></div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer-info" id="modal-footer-info"></div>
+      <button class="notify-all-btn" id="modal-notify-btn" onclick="notifyFromModal()">Notify all passengers</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const AIRLINES=[{code:'AC',name:'Air Canada'},{code:'UA',name:'United Airlines'},{code:'AA',name:'American Airlines'},{code:'DL',name:'Delta Air Lines'},{code:'WS',name:'WestJet'},{code:'BA',name:'British Airways'},{code:'LH',name:'Lufthansa'},{code:'AF',name:'Air France'},{code:'EK',name:'Emirates'},{code:'WN',name:'Southwest'}];
+const AIRPORTS=[{iata:'YYZ',city:'Toronto'},{iata:'JFK',city:'New York'},{iata:'LAX',city:'Los Angeles'},{iata:'ORD',city:'Chicago'},{iata:'MIA',city:'Miami'},{iata:'LHR',city:'London'},{iata:'CDG',city:'Paris'},{iata:'FRA',city:'Frankfurt'},{iata:'DXB',city:'Dubai'},{iata:'YVR',city:'Vancouver'},{iata:'SFO',city:'San Francisco'},{iata:'BOS',city:'Boston'},{iata:'SEA',city:'Seattle'},{iata:'ATL',city:'Atlanta'},{iata:'DEN',city:'Denver'}];
+const FIRST=['James','Maria','David','Sarah','Michael','Emma','Robert','Sofia','William','Olivia','Liam','Ava','Noah','Isabella','Lucas','Mia','Ethan','Charlotte','Oliver','Amelia','Henry','Chloe','Alexander','Penelope','Daniel','Layla','Matthew','Riley','Aiden','Zoey','Benjamin','Nora','Jackson','Lily','Sebastian','Eleanor','Owen','Hannah','Gabriel','Lillian','Carter','Addison','Jayden','Aubrey','Elijah','Ellie','Logan','Stella','Mason','Natalie','Caleb','Zoe','Ryan','Leah','Nathan','Violet','Aaron','Aurora','Isaac','Savannah'];
+const LAST=['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Martinez','Wilson','Anderson','Taylor','Thomas','Hernandez','Moore','Jackson','Lee','White','Harris','Clark','Lewis','Robinson','Walker','Hall','Allen','Young','King','Wright','Scott','Green','Baker','Adams','Nelson','Carter','Mitchell','Perez','Roberts','Turner','Phillips','Campbell','Parker','Evans','Edwards','Collins','Stewart','Sanchez','Morris','Rogers','Reed','Cook','Morgan','Bell','Murphy','Bailey','Rivera','Cooper','Richardson','Cox','Howard','Ward'];
+const NATIONALITIES=['Canadian','American','British','French','German','Australian','Japanese','Brazilian','Indian','Italian','Spanish','Mexican','Dutch','Swedish','Norwegian'];
+const AV=[['#dbeafe','#1e40af'],['#dcfce7','#166534'],['#fef9c3','#854d0e'],['#ede9fe','#5b21b6'],['#fce7f3','#9d174d'],['#ccfbf1','#0f766e'],['#ffedd5','#9a3412']];
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[rnd(0,arr.length-1)];}
+function pad(n){return String(n).padStart(2,'0');}
+function fmtTime(h,m){return pad(h)+':'+pad(m);}
+function addMins(h,m,add){let t=h*60+m+add;return{h:Math.floor(t/60)%24,m:t%60};}
+function fmtDOB(d){return pad(d.m)+'/'+pad(d.d)+'/'+d.y;}
+function calcAge(d){const n=new Date();return n.getFullYear()-d.y-(n.getMonth()+1<d.m?1:0);}
+function randPassport(){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ';let s=c[rnd(0,25)]+c[rnd(0,25)];for(let i=0;i<7;i++)s+=rnd(0,9);return s;}
+function randDOB(){return{y:rnd(1950,2005),m:rnd(1,12),d:rnd(1,28)};}
+
+let usedNames=new Set();
+function uniqueName(){
+  for(let i=0;i<200;i++){const fn=pick(FIRST),ln=pick(LAST),full=fn+' '+ln;if(!usedNames.has(full)){usedNames.add(full);return{first:fn,last:ln,full};}}
+  const fn=pick(FIRST)+rnd(1,99),ln=pick(LAST);return{first:String(fn),last:ln,full:fn+' '+ln};
+}
+
+const STATUSES=['delayed','delayed','delayed','ontime','ontime','boarding','boarding','landed','cancelled','ontime'];
+const now=new Date(),baseH=now.getHours(),baseM=now.getMinutes();
+
+let flights=[];
+for(let i=0;i<18;i++){
+  const al=pick(AIRLINES);
+  const orig=AIRPORTS[rnd(0,AIRPORTS.length-1)];
+  let dest;do{dest=AIRPORTS[rnd(0,AIRPORTS.length-1)];}while(dest.iata===orig.iata);
+  const schedH=((baseH+rnd(-2,5))%24+24)%24,schedM=pick([0,5,10,15,20,25,30,35,40,45,50,55]);
+  const status=pick(STATUSES),delayMins=status==='delayed'?pick([15,20,25,30,40,45,60,75,90,120]):0;
+  const gate=pick(['A','B','C','D','E'])+rnd(1,30),terminal='T'+rnd(1,4);
+  const passengers=[];
+  for(let p=0;p<rnd(4,9);p++){
+    const nm=uniqueName(),dob=randDOB(),ac=AV[p%AV.length];
+    passengers.push({name:nm.full,initials:nm.first[0]+nm.last[0],seat:rnd(1,42)+pick(['A','B','C','D','E','F']),dob,age:calcAge(dob),bags:rnd(0,3),passport:randPassport(),nationality:pick(NATIONALITIES),avatarBg:ac[0],avatarColor:ac[1],notified:false});
+  }
+  flights.push({id:i,flightNum:al.code+rnd(100,9999),airline:al.name,orig,dest,schedH,schedM,status,delayMins,gate,terminal,passengers,notified:false});
+}
+
+let currentFilter='all',modalFlightId=null;
+
+function filterFlights(f,el){currentFilter=f;document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderRows();}
+
+function renderStats(){
+  const total=flights.length,delayed=flights.filter(f=>f.status==='delayed').length,ontime=flights.filter(f=>f.status==='ontime').length,boarding=flights.filter(f=>f.status==='boarding').length,cancelled=flights.filter(f=>f.status==='cancelled').length;
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Total Flights</div><div class="stat-value">${total}</div><div class="stat-sub">Today's board</div></div>
+    <div class="stat-card"><div class="stat-label">Delayed</div><div class="stat-value red">${delayed}</div><div class="stat-sub">${Math.round(delayed/total*100)}% of flights</div></div>
+    <div class="stat-card"><div class="stat-label">On Time</div><div class="stat-value green">${ontime}</div><div class="stat-sub">Operating normally</div></div>
+    <div class="stat-card"><div class="stat-label">Boarding / Cancelled</div><div class="stat-value amber">${boarding}</div><div class="stat-sub">${cancelled} cancellation${cancelled!==1?'s':''}</div></div>`;
+}
+
+function renderNotifs(){
+  const items=[...flights.filter(f=>f.status==='cancelled'),...flights.filter(f=>f.status==='delayed').sort((a,b)=>b.delayMins-a.delayMins)];
+  document.getElementById('notif-list').innerHTML=items.map(f=>{
+    const sev=f.status==='cancelled'?'urgent':f.delayMins>=60?'urgent':f.delayMins>=30?'warning':'info';
+    const bc=f.status==='cancelled'?'badge-urgent':f.delayMins>=60?'badge-urgent':f.delayMins>=30?'badge-warn':'badge-info';
+    const est=addMins(f.schedH,f.schedM,f.delayMins);
+    return`<div class="notif-card ${sev}" onclick="openModal(${f.id})">
+      <div class="notif-header"><span class="notif-flight">${f.flightNum}</span><span class="notif-time">${fmtTime(f.schedH,f.schedM)}</span></div>
+      <div class="notif-route">${f.orig.iata}→${f.dest.iata} · ${f.airline}</div>
+      <div class="notif-msg">${f.status==='cancelled'?'Cancelled — passengers need rebooking.':f.delayMins>=60?`Major delay. New dep. ${fmtTime(est.h,est.m)}.`:`Delayed by ${f.delayMins} min.`}</div>
+      <span class="notif-delay-badge ${bc}">${f.status==='cancelled'?'Cancelled':'+'+f.delayMins+' min'}</span>
+    </div>`;
+  }).join('');
+}
+
+function statusPill(s){
+  return({delayed:'<span class="status-pill pill-delayed">Delayed</span>',ontime:'<span class="status-pill pill-ontime">On Time</span>',boarding:'<span class="status-pill pill-boarding">Boarding</span>',cancelled:'<span class="status-pill pill-cancelled">Cancelled</span>',landed:'<span class="status-pill pill-landed">Landed</span>'})[s]||'';
+}
+
+function renderRows(){
+  const filtered=currentFilter==='all'?flights:flights.filter(f=>f.status===currentFilter);
+  document.getElementById('flight-rows').innerHTML=filtered.map(f=>{
+    const est=addMins(f.schedH,f.schedM,f.delayMins),isActionable=f.status==='delayed'||f.status==='cancelled',notifiedCount=f.passengers.filter(p=>p.notified).length;
+    return`<div class="ft-row">
+      <div><div class="flight-num">${f.flightNum}</div><div class="airline-name">${f.airline}</div></div>
+      <div><div class="route">${f.orig.iata}→${f.dest.iata}</div><div class="route-cities">${f.orig.city}→${f.dest.city}</div></div>
+      <div class="time-col">${fmtTime(f.schedH,f.schedM)}</div>
+      <div class="time-col${f.status==='delayed'?' delayed-time':''}">${fmtTime(est.h,est.m)}</div>
+      <div>${f.status==='delayed'?`<span class="delay-pill badge-urgent">+${f.delayMins}m</span>`:f.status==='cancelled'?`<span class="delay-pill badge-urgent">Cnx</span>`:`<span class="delay-pill badge-ok">—</span>`}</div>
+      <div>${statusPill(f.status)}</div>
+      <div><div class="pax-count">${f.passengers.length}</div><div class="pax-notified">${notifiedCount}/${f.passengers.length} notified</div></div>
+      <div onclick="event.stopPropagation()">${isActionable?`<button class="send-btn${f.notified?' sent':''}" onclick="sendNotification(${f.id})">${f.notified?'✓ Sent':'Notify'}</button>`:'<span style="font-size:11px;color:#bbb">—</span>'}</div>
+      <div onclick="event.stopPropagation()"><button class="view-btn" onclick="openModal(${f.id})">View passengers</button></div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(id){
+  modalFlightId=id;
+  const f=flights.find(x=>x.id===id);
+  document.getElementById('modal-badge').textContent=f.flightNum;
+  document.getElementById('modal-title').textContent=`${f.orig.city} (${f.orig.iata}) → ${f.dest.city} (${f.dest.iata})`;
+  document.getElementById('modal-subtitle').textContent=`${f.airline}  ·  ${f.terminal}, Gate ${f.gate}  ·  ${f.passengers.length} passengers`;
+  renderModalPax(f);
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+
+function renderModalPax(f){
+  const notifiedCount=f.passengers.filter(p=>p.notified).length;
+  document.getElementById('modal-footer-info').textContent=`${f.passengers.length} passengers  ·  ${notifiedCount} notified`;
+  const btn=document.getElementById('modal-notify-btn');
+  btn.textContent=f.notified?'✓ All notified':'Notify all passengers';
+  btn.className='notify-all-btn'+(f.notified?' done':'');
+  document.getElementById('modal-pax-list').innerHTML=f.passengers.map(p=>`
+    <div class="pax-row">
+      <div class="pax-avatar" style="background:${p.avatarBg};color:${p.avatarColor}">${p.initials}</div>
+      <div><div class="pax-name">${p.name}</div><div class="pax-nat">${p.nationality}</div></div>
+      <div class="pax-mono">${p.seat}</div>
+      <div class="pax-small">${fmtDOB(p.dob)}</div>
+      <div class="pax-mono">${p.age}</div>
+      <div class="pax-small">${p.bags} bag${p.bags!==1?'s':''}</div>
+      <div class="pax-mono" style="font-size:10px;letter-spacing:0.03em">${p.passport}</div>
+      <div class="nd-wrap"><div class="notif-dot ${p.notified?'nd-yes':'nd-no'}">${p.notified?'✓':'○'}</div></div>
+    </div>
+  `).join('');
+}
+
+function closeModal(){document.getElementById('modal-backdrop').classList.add('hidden');modalFlightId=null;}
+function closeModalOnOverlay(e){if(e.target===document.getElementById('modal-backdrop'))closeModal();}
+
+function notifyFromModal(){
+  if(modalFlightId===null)return;
+  const f=flights.find(x=>x.id===modalFlightId);
+  f.notified=true;f.passengers.forEach(p=>p.notified=true);
+  renderModalPax(f);renderRows();renderNotifs();
+  showToast(f.flightNum,`All ${f.passengers.length} passengers notified`);
+}
+
+function sendNotification(id){
+  const f=flights.find(x=>x.id===id);
+  f.notified=true;f.passengers.forEach(p=>p.notified=true);
+  renderRows();renderNotifs();
+  showToast(f.flightNum,`Notified ${f.passengers.length} passengers`);
+  if(modalFlightId===id)renderModalPax(f);
+}
+
+function showToast(flight,msg){
+  const c=document.getElementById('toast-container'),t=document.createElement('div');
+  t.className='toast';t.innerHTML=`<div class="toast-title">✓ ${flight}</div><div class="toast-body">${msg}</div>`;
+  c.appendChild(t);requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
+}
+
+function updateTime(){document.getElementById('live-time').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
+setInterval(updateTime,1000);updateTime();
+renderStats();renderNotifs();renderRows();
+setInterval(()=>{const d=flights.filter(f=>f.status==='delayed'&&!f.notified);if(d.length)showToast(pick(d).flightNum,`Auto-alert: ${pick(d).delayMins}min delay`);},12000);
+</script>
